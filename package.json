@@ -1,0 +1,132 @@
+{
+  "name": "deepseek-commit-message",
+  "displayName": "DeepSeek Commit Message",
+  "description": "根据当前更改内容自动生成 Git Commit Message（使用 DeepSeek 模型）",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "SCM Providers",
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "commit",
+    "commit message",
+    "deepseek",
+    "ai"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onCommand:deepseekCommit.generate",
+    "onCommand:deepseekCommit.setApiKey",
+    "onCommand:deepseekCommit.setSystemPrompt",
+    "onCommand:deepseekCommit.testConnection"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "deepseekCommit.generate",
+        "title": "生成 Commit Message",
+        "category": "DeepSeek",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "deepseekCommit.setApiKey",
+        "title": "设置 API Key",
+        "category": "DeepSeek"
+      },
+      {
+        "command": "deepseekCommit.setSystemPrompt",
+        "title": "设置系统提示词",
+        "category": "DeepSeek"
+      },
+      {
+        "command": "deepseekCommit.testConnection",
+        "title": "测试连接",
+        "category": "DeepSeek"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "deepseekCommit.generate",
+          "when": "scmProvider == git",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "deepseekCommit.generate",
+          "when": "scmProvider == git"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "DeepSeek Commit Message",
+      "properties": {
+        "deepseekCommit.systemPrompt": {
+          "type": "string",
+          "default": "你是一名资深软件工程师。请根据提供的 git diff 生成一条符合 @commitlint/config-conventional 校验规则的 Commit Message。\n\n格式：type(scope): subject（scope 可选）\n\n校验规则：\n- type 必须小写，且只能是：build、chore、ci、docs、feat、fix、perf、refactor、revert、style、test 之一。\n- subject 不能为空，不能以句号结尾，且首字母不要大写（避免 sentence-case / start-case / pascal-case / upper-case）。\n- 整个 header（type(scope): subject）长度不能超过 100 个字符，且首尾不能有空白。\n- 若写正文 body，正文前必须空一行，每行不超过 100 个字符。\n- 若写脚注 footer，脚注前必须空一行，每行不超过 100 个字符。\n\n要求：\n- 使用祈使句、简洁地概括改动。\n- 只输出 Commit Message 文本本身，不要使用 Markdown 代码块，也不要附加任何解释。\n- 若 diff 为空或改动微不足道，输出：chore: update",
+          "description": "生成 Commit Message 时使用的系统提示词，默认遵循 @commitlint/config-conventional 校验规则。",
+          "markdownDescription": "生成 Commit Message 时使用的系统提示词，可自定义风格与规范。支持占位符 `{branch}`（当前分支名）。"
+        },
+        "deepseekCommit.baseUrl": {
+          "type": "string",
+          "default": "https://api.deepseek.com",
+          "description": "DeepSeek API 地址（OpenAI 兼容）。默认 https://api.deepseek.com，如使用代理可改为 https://api.deepseek.com/v1 或自定义兼容端点。"
+        },
+        "deepseekCommit.model": {
+          "type": "string",
+          "default": "deepseek-v4-flash",
+          "description": "使用的模型名称。默认 deepseek-v4-flash。"
+        },
+        "deepseekCommit.temperature": {
+          "type": "number",
+          "default": 0.3,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "采样温度，越小结果越稳定。"
+        },
+        "deepseekCommit.maxTokens": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 1,
+          "maximum": 8000,
+          "description": "生成内容的最大 token 数。"
+        },
+        "deepseekCommit.maxDiffLength": {
+          "type": "number",
+          "default": 8000,
+          "minimum": 500,
+          "description": "发送给模型的 diff 最大字符数，超过部分会被截断以避免 token 超限。"
+        },
+        "deepseekCommit.autoFillInput": {
+          "type": "boolean",
+          "default": true,
+          "description": "生成后自动填入源代码管理面板的 Commit Message 输入框。"
+        },
+        "deepseekCommit.requestTimeout": {
+          "type": "number",
+          "default": 60000,
+          "minimum": 10000,
+          "description": "API 请求超时时间（毫秒）。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}
