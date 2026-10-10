@@ -32,7 +32,7 @@ Commit Message，并自动填入「源代码管理」面板的输入框。
 
 | 配置 | 默认值 | 说明 |
 | --- | --- | --- |
-| `deepseekCommit.systemPrompt` | 内置中文提示词 | 系统提示词，支持 `{branch}` 占位符 |
+| `deepseekCommit.systemPrompt` | 内置中文提示词 | 系统提示词，默认只输出一行 header、不写正文 body，支持 `{branch}` 占位符 |
 | `deepseekCommit.baseUrl` | `https://api.deepseek.com` | API 地址（OpenAI 兼容，可加 `/v1`） |
 | `deepseekCommit.model` | `deepseek-v4-flash` | 模型名，默认 `deepseek-v4-flash` |
 | `deepseekCommit.temperature` | `0.3` | 采样温度 |
